@@ -5,6 +5,7 @@
 library mapbox_gl;
 
 import 'dart:async';
+import 'dart:convert' as prefix0;
 import 'dart:math';
 import 'dart:ui';
 
@@ -22,5 +23,7 @@ part 'src/location.dart';
 part 'src/symbol.dart';
 part 'src/line.dart';
 part 'src/circle.dart';
+part 'src/circle_layer.dart';
+part 'src/heatmap_layer.dart';
 part 'src/ui.dart';
 part 'src/global.dart';

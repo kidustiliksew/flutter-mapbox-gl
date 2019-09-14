@@ -16,6 +16,7 @@ import com.mapbox.mapboxsdk.geometry.LatLngBounds;
 import com.mapbox.mapboxsdk.log.Logger;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.geojson.LineString;
+import com.mapbox.mapboxsdk.style.layers.CircleLayer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -363,6 +364,24 @@ class Convert {
       sink.setDraggable(toBoolean(draggable));
     }
   }
+
+  static void interpretHeatmapLayerOptions(Object o, HeatmapLayerController sink) {
+    final Map<?, ?> data = toMap(o);
+      final Object points = data.get("points");
+      if(points != null) {
+          List<com.mapbox.geojson.Point> latLngPoints = new ArrayList<>();
+
+          List<?> list = toList(points);
+          for (int i = 0; i < list.size(); i++) {
+              Object point = list.get(i);
+              LatLng latLng = toLatLng(point);
+              latLngPoints.add(com.mapbox.geojson.Point.fromLngLat(latLng.getLongitude(), latLng.getLatitude()));
+          }
+
+          sink.setPoints(latLngPoints);
+      }
+  }
+  
 
   static void interpretCircleOptions(Object o, CircleOptionsSink sink) {
     final Map<?, ?> data = toMap(o);

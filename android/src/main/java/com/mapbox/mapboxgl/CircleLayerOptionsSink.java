@@ -1,4 +1,9 @@
 package com.mapbox.mapboxgl;
 
-public class CircleLayerOptionsSink {
+import com.mapbox.geojson.Point;
+
+import java.util.List;
+
+interface CircleLayerOptionsSink {
+    void setPoints(List<Point> points);
 }

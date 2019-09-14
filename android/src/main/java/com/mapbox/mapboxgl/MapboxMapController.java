@@ -42,6 +42,8 @@ import com.mapbox.mapboxsdk.plugins.annotation.Line;
 import com.mapbox.mapboxsdk.plugins.annotation.LineManager;
 import com.mapbox.geojson.Feature;
 import com.mapbox.mapboxsdk.style.expressions.Expression;
+import com.mapbox.mapboxsdk.style.layers.CircleLayer;
+
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.PluginRegistry;
@@ -89,6 +91,8 @@ final class MapboxMapController
   private final Map<String, SymbolController> symbols;
   private final Map<String, LineController> lines;
   private final Map<String, CircleController> circles;
+  private final Map<String, CircleLayerController> circleLayers;
+  private final Map<String, HeatmapLayerController> heatmapLayers;
   private SymbolManager symbolManager;
   private LineManager lineManager;
   private CircleManager circleManager;
@@ -120,6 +124,8 @@ final class MapboxMapController
     this.symbols = new HashMap<>();
     this.lines = new HashMap<>();
     this.circles = new HashMap<>();
+    this.circleLayers = new HashMap<>();
+    this.heatmapLayers = new HashMap<>();
     this.density = context.getResources().getDisplayMetrics().density;
     methodChannel =
       new MethodChannel(registrar.messenger(), "plugins.flutter.io/mapbox_maps_" + id);
@@ -239,6 +245,7 @@ final class MapboxMapController
   private CircleBuilder newCircleBuilder() {
     return new CircleBuilder(circleManager);
   }
+
     
   private void removeCircle(String circleId) {
     final CircleController circleController = circles.remove(circleId);
@@ -254,6 +261,7 @@ final class MapboxMapController
     }
     return circle;
   }
+
 
   @Override
   public void onMapReady(MapboxMap mapboxMap) {
@@ -444,6 +452,13 @@ final class MapboxMapController
         Convert.interpretLineOptions(call.argument("options"), line);
         line.update(lineManager);
         result.success(null);
+        break;
+      }
+      case "heatmapLayer#add": {
+        HeatmapLayerController heatmapLayerController = new HeatmapLayerController(mapboxMap.getStyle());
+        Convert.interpretHeatmapLayerOptions(call.argument("options"), heatmapLayerController);
+        heatmapLayers.put("heatmap", heatmapLayerController);
+        result.success("heatmap");
         break;
       }
       case "circle#add": {

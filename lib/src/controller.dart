@@ -367,7 +367,8 @@ class MapboxMapController extends ChangeNotifier {
   /// been notified.
   Future<Circle> addCircle(CircleOptions options) async {
     final CircleOptions effectiveOptions =
-    CircleOptions.defaultOptions.copyWith(options);
+        CircleOptions.defaultOptions.copyWith(options);
+
     final String circleId = await _channel.invokeMethod(
       'circle#add',
       <String, dynamic>{
@@ -378,6 +379,23 @@ class MapboxMapController extends ChangeNotifier {
     _circles[circleId] = circle;
     notifyListeners();
     return circle;
+  }
+
+  Future<HeatmapLayer> addHeatmapLayer(HeatmapLayerOptions options) async {
+    final HeatmapLayerOptions effectiveOptions =
+        HeatmapLayerOptions.defaultOptions.copyWith(options);
+
+    final String heatmapLayerId = await _channel.invokeMethod(
+      'heatmapLayer#add',
+      <String, dynamic>{
+        'options': effectiveOptions._toJson(),
+      },
+    );
+
+    final HeatmapLayer heatmapLayer =
+        HeatmapLayer(heatmapLayerId, effectiveOptions);
+    notifyListeners();
+    return heatmapLayer;
   }
 
   /// Updates the specified [circle] with the given [changes]. The circle must
@@ -398,7 +416,6 @@ class MapboxMapController extends ChangeNotifier {
     circle._options = circle._options.copyWith(changes);
     notifyListeners();
   }
-
 
   /// Removes the specified [circle] from the map. The circle must be a current
   /// member of the [circles] set.
